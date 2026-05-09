@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>风电混塔埋件验收单生成</title>
+  <!-- 引入 docx 库（纯前端生成 Word） -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', 'PingFang SC', sans-serif; background: #f4f7fa; padding: 20px; }
+    .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    h2 { text-align: center; color: #1e3a5f; margin-bottom: 20px; font-size: 1.5em; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; color: #333; font-size: 0.95em; }
+    input[type="text"], input[type="date"], input[type="number"] {
+      width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px;
+      font-size: 16px; transition: border 0.2s; background: #f9fafb;
+    }
+    input:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .checkbox-group { display: flex; align-items: center; gap: 10px; }
+    .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2563eb; }
+    .btn {
+      width: 100%; padding: 14px; background: #2563eb; color: white; border: none;
+      border-radius: 10px; font-size: 1.1em; font-weight: 600; letter-spacing: 0.5px;
+      cursor: pointer; margin-top: 10px; transition: background 0.2s;
+    }
+    .btn:active { background: #1d4ed8; }
+    .last-date { text-align: right; font-size: 0.8em; color: #888; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📋 埋件进场验收单</h2>
+    <div class="last-date" id="lastSaved"></div>
+    <form id="checkForm">
+      <div class="form-group">
+        <label>项目名称</label>
+        <input type="text" name="project" placeholder="例如：XX风电场一期" required>
+      </div>
+      <div class="form-group">
+        <label>生产厂家</label>
+        <input type="text" name="factory" placeholder="厂家全称" required>
+      </div>
+      <div class="form-group">
+        <label>材料名称</label>
+        <input type="text" name="material" placeholder="例如：基础锚栓组件" required>
+      </div>
+      <div class="form-group">
+        <label>进场日期</label>
+        <input type="date" name="inDate" required>
+      </div>
+      <div class="form-group">
+        <label>进场数量</label>
+        <input type="number" name="quantity" placeholder="请输入数量" step="any" required>
+      </div>
+      <div class="form-group">
+        <label>检验日期</label>
+        <input type="date" name="checkDate" required>
+      </div>
+      <div class="form-group checkbox-group">
+        <input type="checkbox" name="qualified" id="qualified">
+        <label for="qualified" style="margin-bottom:0;">本次检验合格</label>
+      </div>
+      <button type="button" class="btn" onclick="generateWord()">一键生成验收单（Word）</button>
+    </form>
+  </div>
+
+  <script>
+    // ========== 自动填充上次填写的内容 ==========
+    function loadPreviousData() {
+      const saved = localStorage.getItem('lastCheckData');
+      if (!saved) return;
+      try {
+        const data = JSON.parse(saved);
+        // 遍历表单，回填
+        const form = document.getElementById('checkForm');
+        for (let [key, value] of Object.entries(data)) {
+          const el = form.elements[key];
+          if (!el) continue;
+          if (el.type === 'checkbox') {
+            el.checked = (value === true || value === 'true');
+          } else {
+            el.value = value;
+          }
+        }
+        // 显示上次保存时间
+        if (data._savedAt) {
+          document.getElementById('lastSaved').textContent = '📌 自动填充上次数据（' + data._savedAt + '）';
+        }
+      } catch (e) {
+        console.warn('读取缓存失败', e);
+      }
+    }
+
+    // 保存当前填写内容（生成 Word 时调用）
+    function saveCurrentData() {
+      const form = document.getElementById('checkForm');
+      const data = {};
+      // 遍历所有带name的元素
+      for (let el of form.elements) {
+        if (!el.name) continue;
+        if (el.type === 'checkbox') {
+          data[el.name] = el.checked;
+        } else {
+          data[el.name] = el.value;
+        }
+      }
+      data._savedAt = new Date().toLocaleString('zh-CN');
+      localStorage.setItem('lastCheckData', JSON.stringify(data));
+    }
+
+    // ========== 一键生成 Word 验收单 ==========
+    async function generateWord() {
+      const form = document.getElementById('checkForm');
+      // 简单必填校验
+      if (!form.project.value || !form.factory.value || !form.material.value ||
+          !form.inDate.value || !form.quantity.value || !form.checkDate.value) {
+        alert('请填写所有必填字段（项目名称、厂家、材料、进场日期、数量、检验日期）');
+        return;
+      }
+
+      const project = form.project.value.trim();
+      const factory = form.factory.value.trim();
+      const material = form.material.value.trim();
+      const inDate = form.inDate.value;
+      const quantity = form.quantity.value;
+      const checkDate = form.checkDate.value;
+      const qualified = form.qualified.checked;
+
+      // 使用 docx 构建文档（可自由扩展表格、样式）
+      const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType, WidthType, BorderStyle } = docx;
+
+      const doc = new Document({
+        sections: [{
+          properties: {
+            page: {
+              margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } // 1英寸 = 1440 twips
+            }
+          },
+          children: [
+            // 标题
+            new Paragraph({
+              text: '风电混塔埋件进场验收单',
+              heading: HeadingLevel.HEADING_1,
+              alignment: AlignmentType.CENTER,
+              spacing: { after: 300 },
+            }),
+            // 基本信息表格
+            new Table({
+              width: { size: 100, type: WidthType.PERCENTAGE },
+              rows: [
+                createInfoRow('项目名称', project),
+                createInfoRow('生产厂家', factory),
+                createInfoRow('材料名称', material),
+                createInfoRow('进场日期', inDate),
+                createInfoRow('进场数量', quantity),
+                createInfoRow('检验日期', checkDate),
+                createInfoRow('检验结论', qualified ? '☑ 合格        ☐ 不合格' : '☐ 合格        ☑ 不合格'),
+              ]
+            }),
+            // 空行
+            new Paragraph({ spacing: { before: 400 } }),
+            // 签名区域
+            new Paragraph({
+              children: [
+                new TextRun({ text: '验收人签字：_______________', size: 24 }),
+                new TextRun({ text: '    ', size: 24 }),
+                new TextRun({ text: '日期：_______________', size: 24 }),
+              ],
+              alignment: AlignmentType.LEFT,
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({ text: '监理签字：_______________', size: 24 }),
+                new TextRun({ text: '    ', size: 24 }),
+                new TextRun({ text: '日期：_______________', size: 24 }),
+              ],
+              alignment: AlignmentType.LEFT,
+              spacing: { before: 200 },
+            }),
+            new Paragraph({
+              text: '（扫描二维码自动生成，可打印后手写签名）',
+              size: 18,
+              color: '888888',
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 400 },
+            }),
+          ],
+        }],
+      });
+
+      // 辅助函数：创建表格行（两列：标签 + 值）
+      function createInfoRow(label, value) {
+        return new TableRow({
+          children: [
+            new TableCell({
+              width: { size: 30, type: WidthType.PERCENTAGE },
+              children: [new Paragraph({ text: label, bold: true, spacing: { before: 60, after: 60 } })],
+            }),
+            new TableCell({
+              width: { size: 70, type: WidthType.PERCENTAGE },
+              children: [new Paragraph({ text: value, spacing: { before: 60, after: 60 } })],
+            }),
+          ],
+        });
+      }
+
+      // 保存本次数据到本地缓存
+      saveCurrentData();
+
+      // 生成 Blob 并下载
+      const blob = await Packer.toBlob(doc);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      // 文件名：验收单_项目名称_日期.docx
+      const safeProject = project.replace(/[\\/:*?"<>|]/g, '_');
+      a.download = `埋件验收单_${safeProject}_${checkDate}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // 更新页面提示
+      document.getElementById('lastSaved').textContent = '✅ Word 已生成，' + new Date().toLocaleString('zh-CN');
+    }
+
+    // 页面加载时执行
+    window.addEventListener('DOMContentLoaded', loadPreviousData);
+  </script>
+</body>
+</html>
