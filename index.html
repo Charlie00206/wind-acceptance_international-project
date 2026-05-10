@@ -118,19 +118,25 @@
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d1" placeholder="1"><input type="text" name="d2" placeholder="2"><input type="text" name="d3" placeholder="3"><input type="text" name="d4" placeholder="4"><input type="text" name="d5" placeholder="5">
         </div>
-        <div class="radio-group">
-          <label><input type="radio" name="con5" value="合格"> 合格</label>
-          <label><input type="radio" name="con5" value="不合格"> 不合格</label>
+        <div class="form-group">
+          <label>第一组结论</label>
+          <div class="radio-group">
+            <label><input type="radio" name="con5" value="合格"> 合格</label>
+            <label><input type="radio" name="con5" value="不合格"> 不合格</label>
+          </div>
         </div>
       </details>
-      <details open>
+      <details>
         <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d6" placeholder="1"><input type="text" name="d7" placeholder="2"><input type="text" name="d8" placeholder="3"><input type="text" name="d9" placeholder="4"><input type="text" name="d10" placeholder="5">
         </div>
-        <div class="radio-group">
-          <label><input type="radio" name="con6" value="合格"> 合格</label>
-          <label><input type="radio" name="con6" value="不合格"> 不合格</label>
+        <div class="form-group">
+          <label>第二组结论</label>
+          <div class="radio-group">
+            <label><input type="radio" name="con6" value="合格"> 合格</label>
+            <label><input type="radio" name="con6" value="不合格"> 不合格</label>
+          </div>
         </div>
       </details>
 
@@ -141,42 +147,54 @@
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d11" placeholder="1"><input type="text" name="d12" placeholder="2"><input type="text" name="d13" placeholder="3"><input type="text" name="d14" placeholder="4"><input type="text" name="d15" placeholder="5">
         </div>
-        <div class="radio-group">
-          <label><input type="radio" name="con7" value="合格"> 合格</label>
-          <label><input type="radio" name="con7" value="不合格"> 不合格</label>
+        <div class="form-group">
+          <label>第一组结论</label>
+          <div class="radio-group">
+            <label><input type="radio" name="con7" value="合格"> 合格</label>
+            <label><input type="radio" name="con7" value="不合格"> 不合格</label>
+          </div>
         </div>
       </details>
-      <details open>
+      <details>
         <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d16" placeholder="1"><input type="text" name="d17" placeholder="2"><input type="text" name="d18" placeholder="3"><input type="text" name="d19" placeholder="4"><input type="text" name="d20" placeholder="5">
         </div>
-        <div class="radio-group">
-          <label><input type="radio" name="con8" value="合格"> 合格</label>
-          <label><input type="radio" name="con8" value="不合格"> 不合格</label>
+        <div class="form-group">
+          <label>第二组结论</label>
+          <div class="radio-group">
+            <label><input type="radio" name="con8" value="合格"> 合格</label>
+            <label><input type="radio" name="con8" value="不合格"> 不合格</label>
+          </div>
         </div>
       </details>
 
       <!-- 内螺纹拧入深度 -->
       <h3>🔧 内螺纹拧入深度 (抽检3件/批)</h3>
-      <details open>
+      <details>
         <summary>第一组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d21" placeholder="1"><input type="text" name="d22" placeholder="2"><input type="text" name="d23" placeholder="3"><input type="text" name="d24" placeholder="4"><input type="text" name="d25" placeholder="5">
         </div>
-        <div class="radio-group">
-          <label><input type="radio" name="con9" value="合格"> 合格</label>
-          <label><input type="radio" name="con9" value="不合格"> 不合格</label>
+        <div class="form-group">
+          <label>第一组结论</label>
+          <div class="radio-group">
+            <label><input type="radio" name="con9" value="合格"> 合格</label>
+            <label><input type="radio" name="con9" value="不合格"> 不合格</label>
+          </div>
         </div>
       </details>
-      <details open>
+      <details>
         <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d26" placeholder="1"><input type="text" name="d27" placeholder="2"><input type="text" name="d28" placeholder="3"><input type="text" name="d29" placeholder="4"><input type="text" name="d30" placeholder="5">
         </div>
-        <div class="radio-group">
-          <label><input type="radio" name="con10" value="合格"> 合格</label>
-          <label><input type="radio" name="con10" value="不合格"> 不合格</label>
+        <div class="form-group">
+          <label>第二组结论</label>
+          <div class="radio-group">
+            <label><input type="radio" name="con10" value="合格"> 合格</label>
+            <label><input type="radio" name="con10" value="不合格"> 不合格</label>
+          </div>
         </div>
       </details>
 
@@ -190,6 +208,7 @@
       <!-- 整体验收结论（自动判定） -->
       <h3>✅ 整体验收结论（自动判定）</h3>
       <div class="form-group">
+        <label>验收结论</label>
         <input type="text" id="conclusionDisplay" readonly>
       </div>
 
@@ -260,6 +279,12 @@
         }
       }
 
+      // 工程资料检验结果映射到模板需要的占位符
+      data.certification = data.cert_result === '符合要求' ? '符合要求' : (data.cert_result ? '不符合要求' : '');
+      data.dimension = data.dim_result === '符合要求' ? '符合要求' : (data.dim_result ? '不符合要求' : '');
+      data.raw_material = data.raw_result === '符合要求' ? '符合要求' : (data.raw_result ? '不符合要求' : '');
+      data.list = data.list_result === '符合要求' ? '符合要求' : (data.list_result ? '不符合要求' : '');
+
       // 工程资料结论自动生成
       data.con1 = data.cert_result === '符合要求' ? '合格' : (data.cert_result ? '不合格' : '');
       data.con2 = data.dim_result === '符合要求' ? '合格' : (data.dim_result ? '不合格' : '');
@@ -270,7 +295,7 @@
       data.appearance = data.appearance_result || '';
       data.con11 = data.appearance_result === '符合要求' ? '合格' : (data.appearance_result ? '不合格' : '');
 
-      // 清理不需要直接渲染的 radio 字段
+      // 清理不需要直接渲染的 radio 字段（模板里没有对应占位符）
       delete data.cert_result;
       delete data.dim_result;
       delete data.raw_result;
@@ -317,12 +342,10 @@
         if (el.type === 'radio') {
           el.checked = false;
         } else if (el.type !== 'button' && el.type !== 'submit' && el.name) {
-          // 保留项目、厂家、材料（默认保留，除非强制重置）
           if (!resetAll && (el.name === 'project' || el.name === 'factory' || el.name === 'material')) continue;
           el.value = '';
         }
       }
-      // 清空自动结论显示
       const display = document.getElementById('conclusionDisplay');
       if (display) display.value = '';
     }
@@ -333,7 +356,6 @@
       updateCartDisplay();
       clearFormFields(true);
       localStorage.removeItem('acceptance_last');
-      // 重新加载时项目下拉回到默认
       document.getElementById('projectField').value = '';
     }
 
@@ -424,7 +446,6 @@
       }
     }
 
-    // 页面关闭前保存当前数据
     window.addEventListener('beforeunload', saveTempData);
   </script>
 </body>
