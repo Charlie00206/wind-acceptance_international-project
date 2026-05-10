@@ -247,6 +247,51 @@
       localStorage.setItem('acceptance_last', JSON.stringify(data));
     }
 
+    // 实时更新结论显示（不改变其他数据）
+    function updateConclusionDisplay() {
+      const form = document.getElementById('checkForm');
+      const temp = {};
+      for (let el of form.elements) {
+        if (!el.name) continue;
+        if (el.type === 'radio') {
+          if (el.checked) temp[el.name] = el.value;
+        }
+      }
+
+      // 工程资料结论
+      const con1 = temp.cert_result === '符合要求' ? '合格' : (temp.cert_result ? '不合格' : '');
+      const con2 = temp.dim_result === '符合要求' ? '合格' : (temp.dim_result ? '不合格' : '');
+      const con3 = temp.raw_result === '符合要求' ? '合格' : (temp.raw_result ? '不合格' : '');
+      const con4 = temp.list_result === '符合要求' ? '合格' : (temp.list_result ? '不合格' : '');
+
+      // 外观结论
+      const con11 = temp.appearance_result === '符合要求' ? '合格' : (temp.appearance_result ? '不合格' : '');
+
+      // 现场检验结论直接取 radio 值
+      const con5 = temp.con5 || '';
+      const con6 = temp.con6 || '';
+      const con7 = temp.con7 || '';
+      const con8 = temp.con8 || '';
+      const con9 = temp.con9 || '';
+      const con10 = temp.con10 || '';
+
+      const conclusionFields = [con1, con2, con3, con4, con5, con6, con7, con8, con9, con10, con11];
+      let allPass = true;
+      for (let f of conclusionFields) {
+        if (f !== '合格') {
+          allPass = false;
+          break;
+        }
+      }
+
+      // 只有当所有必须的结论都已选择时才显示结果，否则显示空（避免未填完就显示不合格）
+      const allFilled = conclusionFields.every(f => f !== '');
+      const conclusionText = allFilled ? (allPass ? '合格，予以接收' : '不合格，拒绝接收') : '';
+
+      const display = document.getElementById('conclusionDisplay');
+      if (display) display.value = conclusionText;
+    }
+
     // 收集表单数据并自动计算所有自动结论
     function collectFormData() {
       const form = document.getElementById('checkForm');
@@ -293,10 +338,6 @@
         }
       }
       data.conclusion = allPass ? '合格，予以接收' : '不合格，拒绝接收';
-
-      // 更新只读显示框
-      const display = document.getElementById('conclusionDisplay');
-      if (display) display.value = data.conclusion;
 
       return data;
     }
@@ -426,6 +467,18 @@
         alert('生成失败：' + error.message);
       }
     }
+
+    // 绑定 radio 变化事件，实时更新结论
+    document.addEventListener('change', function(e) {
+      if (e.target.type === 'radio') {
+        updateConclusionDisplay();
+      }
+    });
+
+    // 页面加载完，根据可能缓存的数据或默认状态更新一次
+    window.addEventListener('DOMContentLoaded', function() {
+      updateConclusionDisplay();
+    });
 
     window.addEventListener('beforeunload', saveTempData);
   </script>
