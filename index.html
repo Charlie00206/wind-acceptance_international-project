@@ -3,30 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>风电混塔埋件进场验收单</title>
+  <title>风电混塔埋件验收单</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f4f7fa; padding: 15px; }
-    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .container { max-width: 650px; margin: 0 auto; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     h2 { text-align: center; color: #1e3a5f; margin-bottom: 20px; }
-    h3 { font-size: 1em; color: #2c3e50; border-left: 4px solid #2563eb; padding-left: 10px; margin: 15px 0 10px; }
+    h3 { font-size: 1em; color: #2c3e50; border-left: 4px solid #2563eb; padding-left: 10px; margin: 18px 0 8px; }
     .form-group { margin-bottom: 12px; }
     label { display: block; font-weight: 600; margin-bottom: 4px; color: #333; font-size: 0.9em; }
-    input[type="text"], input[type="date"], input[type="number"], textarea {
+    input[type="text"], input[type="date"], input[type="number"], textarea, select {
       width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;
       font-size: 16px; background: #f9fafb; transition: border 0.2s;
     }
-    textarea { resize: vertical; min-height: 50px; }
-    input:focus, textarea:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    textarea { resize: vertical; min-height: 60px; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
     .grid-5 input { padding: 8px; font-size: 14px; }
     .btn {
-      width: 100%; padding: 14px; background: #2563eb; color: white; border: none;
-      border-radius: 10px; font-size: 1.1em; font-weight: 600; margin-top: 15px; cursor: pointer;
+      width: 100%; padding: 12px; background: #2563eb; color: white; border: none;
+      border-radius: 10px; font-size: 1em; font-weight: 600; cursor: pointer; margin-top: 8px;
     }
     .btn:active { background: #1d4ed8; }
-    .tip { font-size: 0.8em; color: #666; margin-top: 8px; text-align: center; }
+    .btn-secondary { background: #64748b; }
+    .btn-danger { background: #dc2626; }
+    .btn-small { width: auto; display: inline-block; padding: 8px 18px; font-size: 0.9em; }
+    .radio-group { display: flex; gap: 20px; align-items: center; }
+    .radio-group label { font-weight: normal; display: flex; align-items: center; gap: 4px; }
+    .list-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .badge { background: #2563eb; color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.8em; }
+    .tip { font-size: 0.8em; color: #666; text-align: center; margin-top: 6px; }
     details { margin-bottom: 10px; }
     details summary { background: #f0f4ff; padding: 10px; border-radius: 8px; font-weight: 600; }
   </style>
@@ -34,83 +41,108 @@
 <body>
   <div class="container">
     <h2>📋 埋件进场验收单</h2>
+
+    <!-- 待生成列表展示 -->
+    <div id="cartArea" style="margin-bottom: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <strong>📦 待生成列表 (<span id="cartCount">0</span>)</strong>
+        <button type="button" class="btn-small btn-danger" onclick="clearAll()">一键清空</button>
+      </div>
+      <div id="cartList" style="margin-top: 8px; max-height: 180px; overflow-y: auto;"></div>
+    </div>
+
     <form id="checkForm">
       <!-- 基本信息 -->
       <h3>📌 基本信息</h3>
+      <div class="form-group">
+        <label>项目名称（固定）</label>
+        <input type="text" id="projectField" value="沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目" readonly>
+      </div>
       <div class="grid-2">
-        <div class="form-group"><label>项目名称</label><input type="text" name="project" required></div>
         <div class="form-group"><label>生产厂家</label><input type="text" name="factory" required></div>
+        <div class="form-group">
+          <label>材料名称</label>
+          <select name="material" required>
+            <option value="">请选择埋件类型</option>
+            <option>M48吊点埋件</option>
+            <option>M16蛇形埋件</option>
+            <option>M20挂点埋件</option>
+            <option>接地埋件</option>
+            <option>限位埋件</option>
+            <option>调平埋件</option>
+            <option>摄像机埋件</option>
+          </select>
+        </div>
       </div>
       <div class="grid-2">
-        <div class="form-group"><label>材料名称</label><input type="text" name="material" required></div>
         <div class="form-group"><label>进场数量</label><input type="number" name="quantity" required></div>
-      </div>
-      <div class="grid-2">
         <div class="form-group"><label>进场日期</label><input type="date" name="inData" required></div>
-        <div class="form-group"><label>检验日期</label><input type="date" name="checkData" required></div>
       </div>
+      <div class="form-group"><label>检验日期</label><input type="date" name="checkData" required></div>
 
-      <!-- 工程资料 -->
+      <!-- 工程资料检验（四个子项） -->
       <h3>📄 工程资料检验</h3>
-      <div class="grid-2">
-        <div class="form-group"><label>出场合格证 检测批次</label><input type="text" name="No1" placeholder="例如：批号2024-001"></div>
-        <div class="form-group"><label>出场合格证 检验结果</label><input type="text" name="certification"></div>
+      <!-- 子项1：出场合格证 -->
+      <div class="form-group"><label>出场合格证及质量证明文件 – 检测批次</label><input type="text" name="No1" placeholder="例如：批号2024-001"></div>
+      <div class="radio-group">
+        <label><input type="radio" name="cert_result" value="符合要求"> 符合要求</label>
+        <label><input type="radio" name="cert_result" value="不符合要求"> 不符合要求</label>
       </div>
-      <div class="form-group"><label>出场合格证 结论</label><input type="text" name="con1"></div>
 
-      <div class="grid-2">
-        <div class="form-group"><label>尺寸检验报告 检测批次</label><input type="text" name="No2"></div>
-        <div class="form-group"><label>尺寸检验报告 检验结果</label><input type="text" name="dimension"></div>
+      <!-- 子项2：尺寸检验报告 -->
+      <div class="form-group"><label>尺寸检验报告 – 检测批次</label><input type="text" name="No2"></div>
+      <div class="radio-group">
+        <label><input type="radio" name="dim_result" value="符合要求"> 符合要求</label>
+        <label><input type="radio" name="dim_result" value="不符合要求"> 不符合要求</label>
       </div>
-      <div class="form-group"><label>尺寸检验报告 结论</label><input type="text" name="con2"></div>
 
-      <div class="grid-2">
-        <div class="form-group"><label>原材料质保书 检测批次</label><input type="text" name="No3"></div>
-        <div class="form-group"><label>原材料质保书 检验结果</label><input type="text" name="raw_material"></div>
+      <!-- 子项3：原材料质保书 -->
+      <div class="form-group"><label>原材料质保书 – 检测批次</label><input type="text" name="No3"></div>
+      <div class="radio-group">
+        <label><input type="radio" name="raw_result" value="符合要求"> 符合要求</label>
+        <label><input type="radio" name="raw_result" value="不符合要求"> 不符合要求</label>
       </div>
-      <div class="form-group"><label>原材料质保书 结论</label><input type="text" name="con3"></div>
 
-      <div class="grid-2">
-        <div class="form-group"><label>发货清单 检测批次</label><input type="text" name="No4"></div>
-        <div class="form-group"><label>发货清单 检验结果</label><input type="text" name="list"></div>
+      <!-- 子项4：发货清单 -->
+      <div class="form-group"><label>发货清单 – 检测批次</label><input type="text" name="No4"></div>
+      <div class="radio-group">
+        <label><input type="radio" name="list_result" value="符合要求"> 符合要求</label>
+        <label><input type="radio" name="list_result" value="不符合要求"> 不符合要求</label>
       </div>
-      <div class="form-group"><label>发货清单 结论</label><input type="text" name="con4"></div>
 
-      <!-- 现场检验 - 尺寸检验 -->
+      <!-- 现场检验部分保持不变 -->
       <h3>🔧 现场检验 - 尺寸检验</h3>
       <details open>
         <summary>尺寸检验 – 第一组 (抽检3件/批)</summary>
         <div class="grid-5" style="margin-top:8px;">
-          <input type="text" name="d1" placeholder="结果1"><input type="text" name="d2" placeholder="结果2"><input type="text" name="d3" placeholder="结果3"><input type="text" name="d4" placeholder="结果4"><input type="text" name="d5" placeholder="结果5">
+          <input type="text" name="d1" placeholder="1"><input type="text" name="d2" placeholder="2"><input type="text" name="d3" placeholder="3"><input type="text" name="d4" placeholder="4"><input type="text" name="d5" placeholder="5">
         </div>
-        <div class="form-group"><label>本组结论</label><input type="text" name="con5"></div>
+        <div class="form-group"><label>结论</label><input type="text" name="con5"></div>
       </details>
       <details>
         <summary>尺寸检验 – 第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
-          <input type="text" name="d6" placeholder="结果1"><input type="text" name="d7" placeholder="结果2"><input type="text" name="d8" placeholder="结果3"><input type="text" name="d9" placeholder="结果4"><input type="text" name="d10" placeholder="结果5">
+          <input type="text" name="d6" placeholder="1"><input type="text" name="d7" placeholder="2"><input type="text" name="d8" placeholder="3"><input type="text" name="d9" placeholder="4"><input type="text" name="d10" placeholder="5">
         </div>
-        <div class="form-group"><label>本组结论</label><input type="text" name="con6"></div>
+        <div class="form-group"><label>结论</label><input type="text" name="con6"></div>
       </details>
 
-      <!-- 现场检验 - 镀锌层厚度 -->
       <h3>🔧 镀锌层厚度检测</h3>
       <details>
-        <summary>镀锌层厚度 – 第一组 (抽检3件/批)</summary>
+        <summary>第一组 (抽检3件/批)</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d11" placeholder="1"><input type="text" name="d12" placeholder="2"><input type="text" name="d13" placeholder="3"><input type="text" name="d14" placeholder="4"><input type="text" name="d15" placeholder="5">
         </div>
         <div class="form-group"><label>结论</label><input type="text" name="con7"></div>
       </details>
       <details>
-        <summary>镀锌层厚度 – 第二组</summary>
+        <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d16" placeholder="1"><input type="text" name="d17" placeholder="2"><input type="text" name="d18" placeholder="3"><input type="text" name="d19" placeholder="4"><input type="text" name="d20" placeholder="5">
         </div>
         <div class="form-group"><label>结论</label><input type="text" name="con8"></div>
       </details>
 
-      <!-- 内螺纹 / 拧入深度 -->
       <h3>🔧 内螺纹 / 拧入深度</h3>
       <details>
         <summary>内螺纹 (抽检3件/批)</summary>
@@ -127,7 +159,6 @@
         <div class="form-group"><label>结论</label><input type="text" name="con10"></div>
       </details>
 
-      <!-- 外观 -->
       <h3>🔧 外观、划伤、凹痕、包装</h3>
       <div class="form-group"><label>检验结果</label><input type="text" name="appearance"></div>
       <div class="form-group"><label>结论</label><input type="text" name="con11"></div>
@@ -136,16 +167,16 @@
       <h3>✅ 整体验收结论</h3>
       <div class="form-group"><label>验收结论</label><textarea name="conclusion" rows="2"></textarea></div>
 
-      <!-- 签名（如果修改了模板占位符） -->
-      <h3>✍️ 签名（如模板已添加占位符则自动填写）</h3>
+      <h3>✍️ 签名</h3>
       <div class="grid-2">
-        <div class="form-group"><label>质检员/日期</label><input type="text" name="inspector" placeholder="例如：张三 / 2025-01-01"></div>
-        <div class="form-group"><label>专业工程师/日期</label><input type="text" name="engineer" placeholder="例如：李四 / 2025-01-01"></div>
+        <div class="form-group"><label>质检员/日期</label><input type="text" name="inspector"></div>
+        <div class="form-group"><label>专业工程师/日期</label><input type="text" name="engineer"></div>
       </div>
 
-      <button type="button" class="btn" onclick="generateWord()">📥 一键生成验收单（Word）</button>
-      <div class="tip">表格与模板完全一致，数据自动填入，可打印后补充手写。</div>
+      <button type="button" class="btn" onclick="addToList()">➕ 添加到待生成列表</button>
+      <button type="button" class="btn btn-secondary" onclick="generateAll()" style="margin-top:6px;">📥 生成全部验收单（Word）</button>
     </form>
+    <div class="tip">可重复添加不同埋件，最终生成一个包含多页的 Word 文档</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
@@ -153,64 +184,205 @@
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
   <script>
-    // 自动回填
-    (function() {
-      const saved = localStorage.getItem('acceptance_data_v2');
-      if (saved) {
-        try {
-          const data = JSON.parse(saved);
-          for (let [k, v] of Object.entries(data)) {
-            const el = document.querySelector(`[name="${k}"]`);
-            if (el) el.value = v;
+    // 待生成数据列表
+    let recordList = [];
+
+    // 自动回填上次填写内容（除项目名称外）
+    (function(){
+      const saved = localStorage.getItem('acceptance_last');
+      if (!saved) return;
+      try {
+        const data = JSON.parse(saved);
+        for (let [k, v] of Object.entries(data)) {
+          const el = document.querySelector(`[name="${k}"]`);
+          if (!el || k === 'project') continue;
+          if (el.type === 'radio') {
+            const radio = document.querySelector(`input[name="${k}"][value="${v}"]`);
+            if (radio) radio.checked = true;
+          } else {
+            el.value = v;
           }
-        } catch(e){}
-      }
+        }
+      } catch(e){}
     })();
 
-    // 保存当前数据
-    function saveCurrent() {
-      const els = document.querySelectorAll('#checkForm input, #checkForm textarea');
-      const data = {};
-      els.forEach(el => { if (el.name) data[el.name] = el.value; });
-      localStorage.setItem('acceptance_data_v2', JSON.stringify(data));
+    // 保存当前数据（用于自动回填）
+    function saveTempData() {
+      const form = document.getElementById('checkForm');
+      const data = { project: document.getElementById('projectField').value };
+      for (let el of form.elements) {
+        if (!el.name || el.name === 'project') continue;
+        if (el.type === 'radio') {
+          if (el.checked) data[el.name] = el.value;
+        } else {
+          data[el.name] = el.value;
+        }
+      }
+      localStorage.setItem('acceptance_last', JSON.stringify(data));
     }
 
-    async function generateWord() {
+    // 收集当前表单数据，并处理工程资料结论生成
+    function collectFormData() {
       const form = document.getElementById('checkForm');
-      // 简单必填校验
-      if (!form.project.value || !form.factory.value || !form.material.value ||
-          !form.quantity.value || !form.inData.value || !form.checkData.value) {
-        alert('请填写基本信息（项目、厂家、材料、数量、进场日期、检验日期）');
-        return;
+      const data = { project: document.getElementById('projectField').value };
+      for (let el of form.elements) {
+        if (!el.name) continue;
+        if (el.type === 'radio') {
+          if (el.checked) data[el.name] = el.value;
+        } else {
+          data[el.name] = el.value;
+        }
       }
 
-      // 收集所有数据
-      const data = {};
-      const els = document.querySelectorAll('#checkForm input, #checkForm textarea');
-      els.forEach(el => { if (el.name) data[el.name] = el.value || ' '; });
+      // 根据工程资料 radio 自动生成 con1~con4
+      data.con1 = data.cert_result === '符合要求' ? '合格' : (data.cert_result ? '不合格' : '');
+      data.con2 = data.dim_result === '符合要求' ? '合格' : (data.dim_result ? '不合格' : '');
+      data.con3 = data.raw_result === '符合要求' ? '合格' : (data.raw_result ? '不合格' : '');
+      data.con4 = data.list_result === '符合要求' ? '合格' : (data.list_result ? '不合格' : '');
 
+      // 清理不需要直接渲染的 radio 字段（模板里没有，避免报错）
+      delete data.cert_result;
+      delete data.dim_result;
+      delete data.raw_result;
+      delete data.list_result;
+
+      return data;
+    }
+
+    // 添加到列表
+    function addToList() {
+      const form = document.getElementById('checkForm');
+      // 基本必填校验
+      if (!form.factory.value || !form.material.value || !form.quantity.value || !form.inData.value || !form.checkData.value) {
+        alert('请完整填写基本信息（厂家、材料、数量、进场日期、检验日期）');
+        return;
+      }
+      const data = collectFormData();
+      recordList.push(data);
+      updateCartDisplay();
+      // 清空除项目名称和厂家以外的字段（厂家可能不变，但清掉方便重新填写）
+      clearFormFields(false);
+      saveTempData();
+    }
+
+    // 清空表单（keepFactory 表示是否保留厂家，现在全部清空）
+    function clearFormFields(resetFactory = true) {
+      const form = document.getElementById('checkForm');
+      for (let el of form.elements) {
+        if (el.type === 'radio') {
+          el.checked = false;
+        } else if (el.type !== 'button' && el.type !== 'submit' && el.name) {
+          if (el.name === 'factory' && !resetFactory) continue;
+          el.value = '';
+        }
+      }
+      // 重置材料下拉
+      form.material.value = '';
+    }
+
+    // 一键清空（列表 + 表单）
+    function clearAll() {
+      recordList = [];
+      updateCartDisplay();
+      clearFormFields(true);
+      // 不清除 localStorage 中的自动回填，下次加载时可能用户想重新开始？也可以清除
+      localStorage.removeItem('acceptance_last');
+    }
+
+    // 更新列表显示
+    function updateCartDisplay() {
+      document.getElementById('cartCount').textContent = recordList.length;
+      const listDiv = document.getElementById('cartList');
+      if (recordList.length === 0) {
+        listDiv.innerHTML = '<div style="color:#999; text-align:center;">暂无添加的验收单</div>';
+        return;
+      }
+      let html = '';
+      recordList.forEach((item, idx) => {
+        html += `<div class="list-item">
+          <span><span class="badge">${idx+1}</span> ${item.material || '未选'} - ${item.inData || ''} (${item.factory || ''})</span>
+          <button type="button" class="btn-small btn-danger" style="padding:4px 10px;" onclick="removeItem(${idx})">删除</button>
+        </div>`;
+      });
+      listDiv.innerHTML = html;
+    }
+
+    function removeItem(index) {
+      recordList.splice(index, 1);
+      updateCartDisplay();
+    }
+
+    // 生成单个验收单的 Word Blob
+    async function renderOneDocx(data) {
+      const resp = await fetch('template.docx');
+      if (!resp.ok) throw new Error('模板文件 template.docx 加载失败');
+      const arrayBuffer = await resp.arrayBuffer();
+      const zip = new PizZip(arrayBuffer);
+      const doc = new docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+      doc.render(data);
+      const blob = doc.getZip().generate({
+        type: 'blob',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      });
+      return blob;
+    }
+
+    // 合并多个 Docx Blob
+    async function mergeDocxBlobs(blobs) {
+      if (blobs.length === 0) throw new Error('没有可生成的验收单');
+      if (blobs.length === 1) return blobs[0];
+
+      // 以第一个为基础
+      const baseZip = new PizZip(await blobs[0].arrayBuffer());
+      let baseDocXml = baseZip.file("word/document.xml").asText();
+
+      for (let i = 1; i < blobs.length; i++) {
+        const nextZip = new PizZip(await blobs[i].arrayBuffer());
+        let nextDocXml = nextZip.file("word/document.xml").asText();
+
+        // 提取 next 的 body 内部内容
+        const bodyMatch = nextDocXml.match(/<w:body[^>]*>([\s\S]*)<\/w:body>/i);
+        if (!bodyMatch) continue;
+        let innerContent = bodyMatch[1];
+
+        // 在 base 的 </w:body> 前插入分页符和 next 的内容
+        const pageBreak = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
+        baseDocXml = baseDocXml.replace('</w:body>', pageBreak + innerContent + '</w:body>');
+      }
+
+      baseZip.file("word/document.xml", baseDocXml);
+      const mergedBlob = baseZip.generate({
+        type: 'blob',
+        mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      });
+      return mergedBlob;
+    }
+
+    // 生成全部文档并下载
+    async function generateAll() {
+      if (recordList.length === 0) {
+        alert('请先添加至少一个埋件的验收数据');
+        return;
+      }
       try {
-        const resp = await fetch('template.docx');
-        if (!resp.ok) throw new Error('模板文件 template.docx 加载失败，请确认已上传到仓库根目录');
-        const buffer = await resp.arrayBuffer();
-        const zip = new PizZip(buffer);
-
-        const doc = new docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-        doc.render(data);
-
-        const out = doc.getZip().generate({
-          type: 'blob',
-          mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        });
-
-        saveCurrent();
-        const safeName = (data.project || '未命名').replace(/[\\/:*?"<>|]/g, '_');
-        saveAs(out, `埋件验收单_${safeName}_${data.checkData || '未填日期'}.docx`);
+        const blobs = [];
+        for (const data of recordList) {
+          const blob = await renderOneDocx(data);
+          blobs.push(blob);
+        }
+        const finalBlob = await mergeDocxBlobs(blobs);
+        const safeName = (recordList[0].project || '验收单').replace(/[\\/:*?"<>|]/g, '_');
+        saveAs(finalBlob, `埋件验收单_${safeName}_${new Date().toISOString().slice(0,10)}.docx`);
+        // 生成成功后不清空列表，方便继续添加，但可提示
+        saveTempData();
       } catch (error) {
         console.error(error);
         alert('生成失败：' + error.message);
       }
     }
+
+    // 页面离开前自动保存当前表单
+    window.addEventListener('beforeunload', saveTempData);
   </script>
 </body>
 </html>
