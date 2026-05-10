@@ -3,231 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>风电混塔埋件验收单生成</title>
-  <!-- 引入 docx 库（纯前端生成 Word） -->
-  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.min.js"></script>
+  <title>风电混塔埋件进场验收单</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', 'PingFang SC', sans-serif; background: #f4f7fa; padding: 20px; }
-    .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    h2 { text-align: center; color: #1e3a5f; margin-bottom: 20px; font-size: 1.5em; }
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; color: #333; font-size: 0.95em; }
-    input[type="text"], input[type="date"], input[type="number"] {
-      width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px;
-      font-size: 16px; transition: border 0.2s; background: #f9fafb;
+    body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f4f7fa; padding: 15px; }
+    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    h2 { text-align: center; color: #1e3a5f; margin-bottom: 20px; }
+    h3 { font-size: 1em; color: #2c3e50; border-left: 4px solid #2563eb; padding-left: 10px; margin: 15px 0 10px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: 600; margin-bottom: 4px; color: #333; font-size: 0.9em; }
+    input[type="text"], input[type="date"], input[type="number"], textarea {
+      width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;
+      font-size: 16px; background: #f9fafb; transition: border 0.2s;
     }
-    input:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    .checkbox-group { display: flex; align-items: center; gap: 10px; }
-    .checkbox-group input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2563eb; }
+    textarea { resize: vertical; min-height: 50px; }
+    input:focus, textarea:focus { outline: none; border-color: #2563eb; background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .grid-5 input { padding: 8px; font-size: 14px; }
     .btn {
       width: 100%; padding: 14px; background: #2563eb; color: white; border: none;
-      border-radius: 10px; font-size: 1.1em; font-weight: 600; letter-spacing: 0.5px;
-      cursor: pointer; margin-top: 10px; transition: background 0.2s;
+      border-radius: 10px; font-size: 1.1em; font-weight: 600; margin-top: 15px; cursor: pointer;
     }
     .btn:active { background: #1d4ed8; }
-    .last-date { text-align: right; font-size: 0.8em; color: #888; margin-bottom: 10px; }
+    .tip { font-size: 0.8em; color: #666; margin-top: 8px; text-align: center; }
+    details { margin-bottom: 10px; }
+    details summary { background: #f0f4ff; padding: 10px; border-radius: 8px; font-weight: 600; }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>📋 埋件进场验收单</h2>
-    <div class="last-date" id="lastSaved"></div>
     <form id="checkForm">
-      <div class="form-group">
-        <label>项目名称</label>
-        <input type="text" name="project" placeholder="例如：XX风电场一期" required>
+      <!-- 基本信息 -->
+      <h3>📌 基本信息</h3>
+      <div class="grid-2">
+        <div class="form-group"><label>项目名称</label><input type="text" name="project" required></div>
+        <div class="form-group"><label>生产厂家</label><input type="text" name="factory" required></div>
       </div>
-      <div class="form-group">
-        <label>生产厂家</label>
-        <input type="text" name="factory" placeholder="厂家全称" required>
+      <div class="grid-2">
+        <div class="form-group"><label>材料名称</label><input type="text" name="material" required></div>
+        <div class="form-group"><label>进场数量</label><input type="number" name="quantity" required></div>
       </div>
-      <div class="form-group">
-        <label>材料名称</label>
-        <input type="text" name="material" placeholder="例如：基础锚栓组件" required>
+      <div class="grid-2">
+        <div class="form-group"><label>进场日期</label><input type="date" name="inData" required></div>
+        <div class="form-group"><label>检验日期</label><input type="date" name="checkData" required></div>
       </div>
-      <div class="form-group">
-        <label>进场日期</label>
-        <input type="date" name="inDate" required>
+
+      <!-- 工程资料 -->
+      <h3>📄 工程资料检验</h3>
+      <div class="grid-2">
+        <div class="form-group"><label>出场合格证 检测批次</label><input type="text" name="No1" placeholder="例如：批号2024-001"></div>
+        <div class="form-group"><label>出场合格证 检验结果</label><input type="text" name="certification"></div>
       </div>
-      <div class="form-group">
-        <label>进场数量</label>
-        <input type="number" name="quantity" placeholder="请输入数量" step="any" required>
+      <div class="form-group"><label>出场合格证 结论</label><input type="text" name="con1"></div>
+
+      <div class="grid-2">
+        <div class="form-group"><label>尺寸检验报告 检测批次</label><input type="text" name="No2"></div>
+        <div class="form-group"><label>尺寸检验报告 检验结果</label><input type="text" name="dimension"></div>
       </div>
-      <div class="form-group">
-        <label>检验日期</label>
-        <input type="date" name="checkDate" required>
+      <div class="form-group"><label>尺寸检验报告 结论</label><input type="text" name="con2"></div>
+
+      <div class="grid-2">
+        <div class="form-group"><label>原材料质保书 检测批次</label><input type="text" name="No3"></div>
+        <div class="form-group"><label>原材料质保书 检验结果</label><input type="text" name="raw_material"></div>
       </div>
-      <div class="form-group checkbox-group">
-        <input type="checkbox" name="qualified" id="qualified">
-        <label for="qualified" style="margin-bottom:0;">本次检验合格</label>
+      <div class="form-group"><label>原材料质保书 结论</label><input type="text" name="con3"></div>
+
+      <div class="grid-2">
+        <div class="form-group"><label>发货清单 检测批次</label><input type="text" name="No4"></div>
+        <div class="form-group"><label>发货清单 检验结果</label><input type="text" name="list"></div>
       </div>
-      <button type="button" class="btn" onclick="generateWord()">一键生成验收单（Word）</button>
+      <div class="form-group"><label>发货清单 结论</label><input type="text" name="con4"></div>
+
+      <!-- 现场检验 - 尺寸检验 -->
+      <h3>🔧 现场检验 - 尺寸检验</h3>
+      <details open>
+        <summary>尺寸检验 – 第一组 (抽检3件/批)</summary>
+        <div class="grid-5" style="margin-top:8px;">
+          <input type="text" name="d1" placeholder="结果1"><input type="text" name="d2" placeholder="结果2"><input type="text" name="d3" placeholder="结果3"><input type="text" name="d4" placeholder="结果4"><input type="text" name="d5" placeholder="结果5">
+        </div>
+        <div class="form-group"><label>本组结论</label><input type="text" name="con5"></div>
+      </details>
+      <details>
+        <summary>尺寸检验 – 第二组</summary>
+        <div class="grid-5" style="margin-top:8px;">
+          <input type="text" name="d6" placeholder="结果1"><input type="text" name="d7" placeholder="结果2"><input type="text" name="d8" placeholder="结果3"><input type="text" name="d9" placeholder="结果4"><input type="text" name="d10" placeholder="结果5">
+        </div>
+        <div class="form-group"><label>本组结论</label><input type="text" name="con6"></div>
+      </details>
+
+      <!-- 现场检验 - 镀锌层厚度 -->
+      <h3>🔧 镀锌层厚度检测</h3>
+      <details>
+        <summary>镀锌层厚度 – 第一组 (抽检3件/批)</summary>
+        <div class="grid-5" style="margin-top:8px;">
+          <input type="text" name="d11" placeholder="1"><input type="text" name="d12" placeholder="2"><input type="text" name="d13" placeholder="3"><input type="text" name="d14" placeholder="4"><input type="text" name="d15" placeholder="5">
+        </div>
+        <div class="form-group"><label>结论</label><input type="text" name="con7"></div>
+      </details>
+      <details>
+        <summary>镀锌层厚度 – 第二组</summary>
+        <div class="grid-5" style="margin-top:8px;">
+          <input type="text" name="d16" placeholder="1"><input type="text" name="d17" placeholder="2"><input type="text" name="d18" placeholder="3"><input type="text" name="d19" placeholder="4"><input type="text" name="d20" placeholder="5">
+        </div>
+        <div class="form-group"><label>结论</label><input type="text" name="con8"></div>
+      </details>
+
+      <!-- 内螺纹 / 拧入深度 -->
+      <h3>🔧 内螺纹 / 拧入深度</h3>
+      <details>
+        <summary>内螺纹 (抽检3件/批)</summary>
+        <div class="grid-5" style="margin-top:8px;">
+          <input type="text" name="d21" placeholder="1"><input type="text" name="d22" placeholder="2"><input type="text" name="d23" placeholder="3"><input type="text" name="d24" placeholder="4"><input type="text" name="d25" placeholder="5">
+        </div>
+        <div class="form-group"><label>结论</label><input type="text" name="con9"></div>
+      </details>
+      <details>
+        <summary>拧入深度 (抽检3件/批)</summary>
+        <div class="grid-5" style="margin-top:8px;">
+          <input type="text" name="d26" placeholder="1"><input type="text" name="d27" placeholder="2"><input type="text" name="d28" placeholder="3"><input type="text" name="d29" placeholder="4"><input type="text" name="d30" placeholder="5">
+        </div>
+        <div class="form-group"><label>结论</label><input type="text" name="con10"></div>
+      </details>
+
+      <!-- 外观 -->
+      <h3>🔧 外观、划伤、凹痕、包装</h3>
+      <div class="form-group"><label>检验结果</label><input type="text" name="appearance"></div>
+      <div class="form-group"><label>结论</label><input type="text" name="con11"></div>
+
+      <!-- 验收结论 -->
+      <h3>✅ 整体验收结论</h3>
+      <div class="form-group"><label>验收结论</label><textarea name="conclusion" rows="2"></textarea></div>
+
+      <!-- 签名（如果修改了模板占位符） -->
+      <h3>✍️ 签名（如模板已添加占位符则自动填写）</h3>
+      <div class="grid-2">
+        <div class="form-group"><label>质检员/日期</label><input type="text" name="inspector" placeholder="例如：张三 / 2025-01-01"></div>
+        <div class="form-group"><label>专业工程师/日期</label><input type="text" name="engineer" placeholder="例如：李四 / 2025-01-01"></div>
+      </div>
+
+      <button type="button" class="btn" onclick="generateWord()">📥 一键生成验收单（Word）</button>
+      <div class="tip">表格与模板完全一致，数据自动填入，可打印后补充手写。</div>
     </form>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docxtemplater@3.37.12/build/docxtemplater.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
   <script>
-    // ========== 自动填充上次填写的内容 ==========
-    function loadPreviousData() {
-      const saved = localStorage.getItem('lastCheckData');
-      if (!saved) return;
-      try {
-        const data = JSON.parse(saved);
-        // 遍历表单，回填
-        const form = document.getElementById('checkForm');
-        for (let [key, value] of Object.entries(data)) {
-          const el = form.elements[key];
-          if (!el) continue;
-          if (el.type === 'checkbox') {
-            el.checked = (value === true || value === 'true');
-          } else {
-            el.value = value;
+    // 自动回填
+    (function() {
+      const saved = localStorage.getItem('acceptance_data_v2');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          for (let [k, v] of Object.entries(data)) {
+            const el = document.querySelector(`[name="${k}"]`);
+            if (el) el.value = v;
           }
-        }
-        // 显示上次保存时间
-        if (data._savedAt) {
-          document.getElementById('lastSaved').textContent = '📌 自动填充上次数据（' + data._savedAt + '）';
-        }
-      } catch (e) {
-        console.warn('读取缓存失败', e);
+        } catch(e){}
       }
-    }
+    })();
 
-    // 保存当前填写内容（生成 Word 时调用）
-    function saveCurrentData() {
-      const form = document.getElementById('checkForm');
+    // 保存当前数据
+    function saveCurrent() {
+      const els = document.querySelectorAll('#checkForm input, #checkForm textarea');
       const data = {};
-      // 遍历所有带name的元素
-      for (let el of form.elements) {
-        if (!el.name) continue;
-        if (el.type === 'checkbox') {
-          data[el.name] = el.checked;
-        } else {
-          data[el.name] = el.value;
-        }
-      }
-      data._savedAt = new Date().toLocaleString('zh-CN');
-      localStorage.setItem('lastCheckData', JSON.stringify(data));
+      els.forEach(el => { if (el.name) data[el.name] = el.value; });
+      localStorage.setItem('acceptance_data_v2', JSON.stringify(data));
     }
 
-    // ========== 一键生成 Word 验收单 ==========
     async function generateWord() {
       const form = document.getElementById('checkForm');
       // 简单必填校验
       if (!form.project.value || !form.factory.value || !form.material.value ||
-          !form.inDate.value || !form.quantity.value || !form.checkDate.value) {
-        alert('请填写所有必填字段（项目名称、厂家、材料、进场日期、数量、检验日期）');
+          !form.quantity.value || !form.inData.value || !form.checkData.value) {
+        alert('请填写基本信息（项目、厂家、材料、数量、进场日期、检验日期）');
         return;
       }
 
-      const project = form.project.value.trim();
-      const factory = form.factory.value.trim();
-      const material = form.material.value.trim();
-      const inDate = form.inDate.value;
-      const quantity = form.quantity.value;
-      const checkDate = form.checkDate.value;
-      const qualified = form.qualified.checked;
+      // 收集所有数据
+      const data = {};
+      const els = document.querySelectorAll('#checkForm input, #checkForm textarea');
+      els.forEach(el => { if (el.name) data[el.name] = el.value || ' '; });
 
-      // 使用 docx 构建文档（可自由扩展表格、样式）
-      const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType, WidthType, BorderStyle } = docx;
+      try {
+        const resp = await fetch('template.docx');
+        if (!resp.ok) throw new Error('模板文件 template.docx 加载失败，请确认已上传到仓库根目录');
+        const buffer = await resp.arrayBuffer();
+        const zip = new PizZip(buffer);
 
-      const doc = new Document({
-        sections: [{
-          properties: {
-            page: {
-              margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } // 1英寸 = 1440 twips
-            }
-          },
-          children: [
-            // 标题
-            new Paragraph({
-              text: '风电混塔埋件进场验收单',
-              heading: HeadingLevel.HEADING_1,
-              alignment: AlignmentType.CENTER,
-              spacing: { after: 300 },
-            }),
-            // 基本信息表格
-            new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
-              rows: [
-                createInfoRow('项目名称', project),
-                createInfoRow('生产厂家', factory),
-                createInfoRow('材料名称', material),
-                createInfoRow('进场日期', inDate),
-                createInfoRow('进场数量', quantity),
-                createInfoRow('检验日期', checkDate),
-                createInfoRow('检验结论', qualified ? '☑ 合格        ☐ 不合格' : '☐ 合格        ☑ 不合格'),
-              ]
-            }),
-            // 空行
-            new Paragraph({ spacing: { before: 400 } }),
-            // 签名区域
-            new Paragraph({
-              children: [
-                new TextRun({ text: '验收人签字：_______________', size: 24 }),
-                new TextRun({ text: '    ', size: 24 }),
-                new TextRun({ text: '日期：_______________', size: 24 }),
-              ],
-              alignment: AlignmentType.LEFT,
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: '监理签字：_______________', size: 24 }),
-                new TextRun({ text: '    ', size: 24 }),
-                new TextRun({ text: '日期：_______________', size: 24 }),
-              ],
-              alignment: AlignmentType.LEFT,
-              spacing: { before: 200 },
-            }),
-            new Paragraph({
-              text: '（扫描二维码自动生成，可打印后手写签名）',
-              size: 18,
-              color: '888888',
-              alignment: AlignmentType.CENTER,
-              spacing: { before: 400 },
-            }),
-          ],
-        }],
-      });
+        const doc = new docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+        doc.render(data);
 
-      // 辅助函数：创建表格行（两列：标签 + 值）
-      function createInfoRow(label, value) {
-        return new TableRow({
-          children: [
-            new TableCell({
-              width: { size: 30, type: WidthType.PERCENTAGE },
-              children: [new Paragraph({ text: label, bold: true, spacing: { before: 60, after: 60 } })],
-            }),
-            new TableCell({
-              width: { size: 70, type: WidthType.PERCENTAGE },
-              children: [new Paragraph({ text: value, spacing: { before: 60, after: 60 } })],
-            }),
-          ],
+        const out = doc.getZip().generate({
+          type: 'blob',
+          mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         });
+
+        saveCurrent();
+        const safeName = (data.project || '未命名').replace(/[\\/:*?"<>|]/g, '_');
+        saveAs(out, `埋件验收单_${safeName}_${data.checkData || '未填日期'}.docx`);
+      } catch (error) {
+        console.error(error);
+        alert('生成失败：' + error.message);
       }
-
-      // 保存本次数据到本地缓存
-      saveCurrentData();
-
-      // 生成 Blob 并下载
-      const blob = await Packer.toBlob(doc);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      // 文件名：验收单_项目名称_日期.docx
-      const safeProject = project.replace(/[\\/:*?"<>|]/g, '_');
-      a.download = `埋件验收单_${safeProject}_${checkDate}.docx`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // 更新页面提示
-      document.getElementById('lastSaved').textContent = '✅ Word 已生成，' + new Date().toLocaleString('zh-CN');
     }
-
-    // 页面加载时执行
-    window.addEventListener('DOMContentLoaded', loadPreviousData);
   </script>
 </body>
 </html>
