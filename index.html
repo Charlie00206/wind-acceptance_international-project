@@ -29,13 +29,14 @@
     .btn-secondary { background: #64748b; }
     .btn-danger { background: #dc2626; }
     .btn-small { width: auto; display: inline-block; padding: 8px 18px; font-size: 0.9em; }
-    .radio-group { display: flex; gap: 20px; align-items: center; }
+    .radio-group { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
     .radio-group label { font-weight: normal; display: flex; align-items: center; gap: 4px; }
     .list-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
     .badge { background: #2563eb; color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.8em; }
     .tip { font-size: 0.8em; color: #666; text-align: center; margin-top: 6px; }
     details { margin-bottom: 10px; }
     details summary { background: #f0f4ff; padding: 10px; border-radius: 8px; font-weight: 600; }
+    input[readonly] { background-color: #eef2ff; font-weight: bold; color: #1e3a5f; }
   </style>
 </head>
 <body>
@@ -55,8 +56,12 @@
       <!-- 基本信息 -->
       <h3>📌 基本信息</h3>
       <div class="form-group">
-        <label>项目名称（固定）</label>
-        <input type="text" id="projectField" value="沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目" readonly>
+        <label>项目名称</label>
+        <select name="project" id="projectField" required>
+          <option value="">请选择项目</option>
+          <option value="沙特阿拉伯利雅得省斯特拉 Acwa power 2000(MW)混塔项目">沙特阿拉伯利雅得省斯特拉 Acwa power 2000(MW)混塔项目</option>
+          <option value="沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目">沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目</option>
+        </select>
       </div>
       <div class="grid-2">
         <div class="form-group"><label>生产厂家</label><input type="text" name="factory" required></div>
@@ -82,90 +87,111 @@
 
       <!-- 工程资料检验（四个子项） -->
       <h3>📄 工程资料检验</h3>
-      <!-- 子项1：出场合格证 -->
       <div class="form-group"><label>出场合格证及质量证明文件 – 检测批次</label><input type="text" name="No1" placeholder="例如：批号2024-001"></div>
       <div class="radio-group">
         <label><input type="radio" name="cert_result" value="符合要求"> 符合要求</label>
         <label><input type="radio" name="cert_result" value="不符合要求"> 不符合要求</label>
       </div>
 
-      <!-- 子项2：尺寸检验报告 -->
       <div class="form-group"><label>尺寸检验报告 – 检测批次</label><input type="text" name="No2"></div>
       <div class="radio-group">
         <label><input type="radio" name="dim_result" value="符合要求"> 符合要求</label>
         <label><input type="radio" name="dim_result" value="不符合要求"> 不符合要求</label>
       </div>
 
-      <!-- 子项3：原材料质保书 -->
       <div class="form-group"><label>原材料质保书 – 检测批次</label><input type="text" name="No3"></div>
       <div class="radio-group">
         <label><input type="radio" name="raw_result" value="符合要求"> 符合要求</label>
         <label><input type="radio" name="raw_result" value="不符合要求"> 不符合要求</label>
       </div>
 
-      <!-- 子项4：发货清单 -->
       <div class="form-group"><label>发货清单 – 检测批次</label><input type="text" name="No4"></div>
       <div class="radio-group">
         <label><input type="radio" name="list_result" value="符合要求"> 符合要求</label>
         <label><input type="radio" name="list_result" value="不符合要求"> 不符合要求</label>
       </div>
 
-      <!-- 现场检验部分保持不变 -->
-      <h3>🔧 现场检验 - 尺寸检验</h3>
+      <!-- 现场检验：尺寸检验 -->
+      <h3>🔧 尺寸检验 (抽检3件/批)</h3>
       <details open>
-        <summary>尺寸检验 – 第一组 (抽检3件/批)</summary>
+        <summary>第一组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d1" placeholder="1"><input type="text" name="d2" placeholder="2"><input type="text" name="d3" placeholder="3"><input type="text" name="d4" placeholder="4"><input type="text" name="d5" placeholder="5">
         </div>
-        <div class="form-group"><label>结论</label><input type="text" name="con5"></div>
+        <div class="radio-group">
+          <label><input type="radio" name="con5" value="合格"> 合格</label>
+          <label><input type="radio" name="con5" value="不合格"> 不合格</label>
+        </div>
       </details>
-      <details>
-        <summary>尺寸检验 – 第二组</summary>
+      <details open>
+        <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d6" placeholder="1"><input type="text" name="d7" placeholder="2"><input type="text" name="d8" placeholder="3"><input type="text" name="d9" placeholder="4"><input type="text" name="d10" placeholder="5">
         </div>
-        <div class="form-group"><label>结论</label><input type="text" name="con6"></div>
+        <div class="radio-group">
+          <label><input type="radio" name="con6" value="合格"> 合格</label>
+          <label><input type="radio" name="con6" value="不合格"> 不合格</label>
+        </div>
       </details>
 
-      <h3>🔧 镀锌层厚度检测</h3>
-      <details>
-        <summary>第一组 (抽检3件/批)</summary>
+      <!-- 镀锌层厚度检测 -->
+      <h3>🔧 镀锌层厚度检测 (抽检3件/批)</h3>
+      <details open>
+        <summary>第一组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d11" placeholder="1"><input type="text" name="d12" placeholder="2"><input type="text" name="d13" placeholder="3"><input type="text" name="d14" placeholder="4"><input type="text" name="d15" placeholder="5">
         </div>
-        <div class="form-group"><label>结论</label><input type="text" name="con7"></div>
+        <div class="radio-group">
+          <label><input type="radio" name="con7" value="合格"> 合格</label>
+          <label><input type="radio" name="con7" value="不合格"> 不合格</label>
+        </div>
       </details>
-      <details>
+      <details open>
         <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d16" placeholder="1"><input type="text" name="d17" placeholder="2"><input type="text" name="d18" placeholder="3"><input type="text" name="d19" placeholder="4"><input type="text" name="d20" placeholder="5">
         </div>
-        <div class="form-group"><label>结论</label><input type="text" name="con8"></div>
+        <div class="radio-group">
+          <label><input type="radio" name="con8" value="合格"> 合格</label>
+          <label><input type="radio" name="con8" value="不合格"> 不合格</label>
+        </div>
       </details>
 
-      <h3>🔧 内螺纹 / 拧入深度</h3>
-      <details>
-        <summary>内螺纹 (抽检3件/批)</summary>
+      <!-- 内螺纹拧入深度 -->
+      <h3>🔧 内螺纹拧入深度 (抽检3件/批)</h3>
+      <details open>
+        <summary>第一组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d21" placeholder="1"><input type="text" name="d22" placeholder="2"><input type="text" name="d23" placeholder="3"><input type="text" name="d24" placeholder="4"><input type="text" name="d25" placeholder="5">
         </div>
-        <div class="form-group"><label>结论</label><input type="text" name="con9"></div>
+        <div class="radio-group">
+          <label><input type="radio" name="con9" value="合格"> 合格</label>
+          <label><input type="radio" name="con9" value="不合格"> 不合格</label>
+        </div>
       </details>
-      <details>
-        <summary>拧入深度 (抽检3件/批)</summary>
+      <details open>
+        <summary>第二组</summary>
         <div class="grid-5" style="margin-top:8px;">
           <input type="text" name="d26" placeholder="1"><input type="text" name="d27" placeholder="2"><input type="text" name="d28" placeholder="3"><input type="text" name="d29" placeholder="4"><input type="text" name="d30" placeholder="5">
         </div>
-        <div class="form-group"><label>结论</label><input type="text" name="con10"></div>
+        <div class="radio-group">
+          <label><input type="radio" name="con10" value="合格"> 合格</label>
+          <label><input type="radio" name="con10" value="不合格"> 不合格</label>
+        </div>
       </details>
 
+      <!-- 外观 -->
       <h3>🔧 外观、划伤、凹痕、包装</h3>
-      <div class="form-group"><label>检验结果</label><input type="text" name="appearance"></div>
-      <div class="form-group"><label>结论</label><input type="text" name="con11"></div>
+      <div class="radio-group">
+        <label><input type="radio" name="appearance_result" value="符合要求"> 符合要求</label>
+        <label><input type="radio" name="appearance_result" value="不符合要求"> 不符合要求</label>
+      </div>
 
-      <!-- 验收结论 -->
-      <h3>✅ 整体验收结论</h3>
-      <div class="form-group"><label>验收结论</label><textarea name="conclusion" rows="2"></textarea></div>
+      <!-- 整体验收结论（自动判定） -->
+      <h3>✅ 整体验收结论（自动判定）</h3>
+      <div class="form-group">
+        <input type="text" id="conclusionDisplay" readonly>
+      </div>
 
       <h3>✍️ 签名</h3>
       <div class="grid-2">
@@ -187,7 +213,7 @@
     // 待生成数据列表
     let recordList = [];
 
-    // 自动回填上次填写内容（除项目名称外）
+    // 自动回填上次填写内容
     (function(){
       const saved = localStorage.getItem('acceptance_last');
       if (!saved) return;
@@ -195,7 +221,7 @@
         const data = JSON.parse(saved);
         for (let [k, v] of Object.entries(data)) {
           const el = document.querySelector(`[name="${k}"]`);
-          if (!el || k === 'project') continue;
+          if (!el) continue;
           if (el.type === 'radio') {
             const radio = document.querySelector(`input[name="${k}"][value="${v}"]`);
             if (radio) radio.checked = true;
@@ -206,12 +232,12 @@
       } catch(e){}
     })();
 
-    // 保存当前数据（用于自动回填）
+    // 保存当前表单数据用于自动回填
     function saveTempData() {
       const form = document.getElementById('checkForm');
-      const data = { project: document.getElementById('projectField').value };
+      const data = {};
       for (let el of form.elements) {
-        if (!el.name || el.name === 'project') continue;
+        if (!el.name) continue;
         if (el.type === 'radio') {
           if (el.checked) data[el.name] = el.value;
         } else {
@@ -221,10 +247,10 @@
       localStorage.setItem('acceptance_last', JSON.stringify(data));
     }
 
-    // 收集当前表单数据，并处理工程资料结论生成
+    // 收集表单数据并自动计算所有自动结论
     function collectFormData() {
       const form = document.getElementById('checkForm');
-      const data = { project: document.getElementById('projectField').value };
+      const data = {};
       for (let el of form.elements) {
         if (!el.name) continue;
         if (el.type === 'radio') {
@@ -234,62 +260,84 @@
         }
       }
 
-      // 根据工程资料 radio 自动生成 con1~con4
+      // 工程资料结论自动生成
       data.con1 = data.cert_result === '符合要求' ? '合格' : (data.cert_result ? '不合格' : '');
       data.con2 = data.dim_result === '符合要求' ? '合格' : (data.dim_result ? '不合格' : '');
       data.con3 = data.raw_result === '符合要求' ? '合格' : (data.raw_result ? '不合格' : '');
       data.con4 = data.list_result === '符合要求' ? '合格' : (data.list_result ? '不合格' : '');
 
-      // 清理不需要直接渲染的 radio 字段（模板里没有，避免报错）
+      // 外观处理：将选择结果放入 appearance，并自动生成 con11
+      data.appearance = data.appearance_result || '';
+      data.con11 = data.appearance_result === '符合要求' ? '合格' : (data.appearance_result ? '不合格' : '');
+
+      // 清理不需要直接渲染的 radio 字段
       delete data.cert_result;
       delete data.dim_result;
       delete data.raw_result;
       delete data.list_result;
+      delete data.appearance_result;
+
+      // 自动计算整体验收结论
+      const conclusionFields = ['con1','con2','con3','con4','con5','con6','con7','con8','con9','con10','con11'];
+      let allPass = true;
+      for (let f of conclusionFields) {
+        if (data[f] !== '合格') {
+          allPass = false;
+          break;
+        }
+      }
+      data.conclusion = allPass ? '合格，予以接收' : '不合格，拒绝接收';
+
+      // 更新只读显示框
+      const display = document.getElementById('conclusionDisplay');
+      if (display) display.value = data.conclusion;
 
       return data;
     }
 
-    // 添加到列表
+    // 添加到待生成列表
     function addToList() {
       const form = document.getElementById('checkForm');
       // 基本必填校验
-      if (!form.factory.value || !form.material.value || !form.quantity.value || !form.inData.value || !form.checkData.value) {
-        alert('请完整填写基本信息（厂家、材料、数量、进场日期、检验日期）');
+      if (!form.project.value || !form.factory.value || !form.material.value || !form.quantity.value || !form.inData.value || !form.checkData.value) {
+        alert('请完整填写基本信息（项目、厂家、材料、数量、进场日期、检验日期）');
         return;
       }
       const data = collectFormData();
       recordList.push(data);
       updateCartDisplay();
-      // 清空除项目名称和厂家以外的字段（厂家可能不变，但清掉方便重新填写）
       clearFormFields(false);
       saveTempData();
     }
 
-    // 清空表单（keepFactory 表示是否保留厂家，现在全部清空）
-    function clearFormFields(resetFactory = true) {
+    // 清空表单（保留项目、材料、厂家以便连续填写）
+    function clearFormFields(resetAll = false) {
       const form = document.getElementById('checkForm');
       for (let el of form.elements) {
         if (el.type === 'radio') {
           el.checked = false;
         } else if (el.type !== 'button' && el.type !== 'submit' && el.name) {
-          if (el.name === 'factory' && !resetFactory) continue;
+          // 保留项目、厂家、材料（默认保留，除非强制重置）
+          if (!resetAll && (el.name === 'project' || el.name === 'factory' || el.name === 'material')) continue;
           el.value = '';
         }
       }
-      // 重置材料下拉
-      form.material.value = '';
+      // 清空自动结论显示
+      const display = document.getElementById('conclusionDisplay');
+      if (display) display.value = '';
     }
 
-    // 一键清空（列表 + 表单）
+    // 一键清空（列表 + 表单 + 缓存）
     function clearAll() {
       recordList = [];
       updateCartDisplay();
       clearFormFields(true);
-      // 不清除 localStorage 中的自动回填，下次加载时可能用户想重新开始？也可以清除
       localStorage.removeItem('acceptance_last');
+      // 重新加载时项目下拉回到默认
+      document.getElementById('projectField').value = '';
     }
 
-    // 更新列表显示
+    // 更新待生成列表显示
     function updateCartDisplay() {
       document.getElementById('cartCount').textContent = recordList.length;
       const listDiv = document.getElementById('cartList');
@@ -300,7 +348,7 @@
       let html = '';
       recordList.forEach((item, idx) => {
         html += `<div class="list-item">
-          <span><span class="badge">${idx+1}</span> ${item.material || '未选'} - ${item.inData || ''} (${item.factory || ''})</span>
+          <span><span class="badge">${idx+1}</span> ${item.material || '未选'} – ${item.inData || ''} (${item.factory || ''})</span>
           <button type="button" class="btn-small btn-danger" style="padding:4px 10px;" onclick="removeItem(${idx})">删除</button>
         </div>`;
       });
@@ -312,10 +360,10 @@
       updateCartDisplay();
     }
 
-    // 生成单个验收单的 Word Blob
+    // 生成单个验收单 Word Blob
     async function renderOneDocx(data) {
       const resp = await fetch('template.docx');
-      if (!resp.ok) throw new Error('模板文件 template.docx 加载失败');
+      if (!resp.ok) throw new Error('模板文件 template.docx 加载失败，请确认已上传到仓库根目录');
       const arrayBuffer = await resp.arrayBuffer();
       const zip = new PizZip(arrayBuffer);
       const doc = new docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
@@ -327,12 +375,11 @@
       return blob;
     }
 
-    // 合并多个 Docx Blob
+    // 合并多个 Docx Blob（按顺序分页）
     async function mergeDocxBlobs(blobs) {
       if (blobs.length === 0) throw new Error('没有可生成的验收单');
       if (blobs.length === 1) return blobs[0];
 
-      // 以第一个为基础
       const baseZip = new PizZip(await blobs[0].arrayBuffer());
       let baseDocXml = baseZip.file("word/document.xml").asText();
 
@@ -340,22 +387,19 @@
         const nextZip = new PizZip(await blobs[i].arrayBuffer());
         let nextDocXml = nextZip.file("word/document.xml").asText();
 
-        // 提取 next 的 body 内部内容
         const bodyMatch = nextDocXml.match(/<w:body[^>]*>([\s\S]*)<\/w:body>/i);
         if (!bodyMatch) continue;
         let innerContent = bodyMatch[1];
 
-        // 在 base 的 </w:body> 前插入分页符和 next 的内容
         const pageBreak = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
         baseDocXml = baseDocXml.replace('</w:body>', pageBreak + innerContent + '</w:body>');
       }
 
       baseZip.file("word/document.xml", baseDocXml);
-      const mergedBlob = baseZip.generate({
+      return baseZip.generate({
         type: 'blob',
         mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       });
-      return mergedBlob;
     }
 
     // 生成全部文档并下载
@@ -373,7 +417,6 @@
         const finalBlob = await mergeDocxBlobs(blobs);
         const safeName = (recordList[0].project || '验收单').replace(/[\\/:*?"<>|]/g, '_');
         saveAs(finalBlob, `埋件验收单_${safeName}_${new Date().toISOString().slice(0,10)}.docx`);
-        // 生成成功后不清空列表，方便继续添加，但可提示
         saveTempData();
       } catch (error) {
         console.error(error);
@@ -381,7 +424,7 @@
       }
     }
 
-    // 页面离开前自动保存当前表单
+    // 页面关闭前保存当前数据
     window.addEventListener('beforeunload', saveTempData);
   </script>
 </body>
