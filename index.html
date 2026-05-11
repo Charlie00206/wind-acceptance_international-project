@@ -197,7 +197,9 @@
 
       <div style="display:flex; gap:10px;">
         <button type="button" class="btn" id="addUpdateBtn" onclick="addToList()" style="flex:1;">➕ 添加到待生成列表</button>
-        <button type="button" class="btn btn-danger" id="cancelEditBtn" style="display:none; flex:0 0 auto;" onclick="cancelEdit()">取消编辑</button>
+        <button type="button" class="btn btn-danger" id="cancelEditBtn" 
+                style="display:none; flex:0 0 auto; width: auto !important; padding: 12px 20px;" 
+                onclick="cancelEdit()">取消编辑</button>
       </div>
       <button type="button" class="btn btn-secondary" onclick="generateAll()" style="margin-top:6px;">📥 生成全部验收单（Word）</button>
     </form>
