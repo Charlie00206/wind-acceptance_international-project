@@ -57,12 +57,11 @@
       <h3>📌 基本信息</h3>
       <div class="form-group">
         <label>项目名称</label>
-        <!-- 改为输入框 + datalist，支持选择和手动输入 -->
-        <input type="text" list="projectList" name="project" id="projectField" required placeholder="请选择或输入项目名称">
-        <datalist id="projectList">
-          <option value="沙特阿拉伯利雅得省斯特拉 Acwa power 2000(MW)混塔项目">
-          <option value="沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目">
-        </datalist>
+        <select name="project" id="projectField" required>
+          <option value="">请选择项目</option>
+          <option value="沙特阿拉伯利雅得省斯特拉 Acwa power 2000(MW)混塔项目">沙特阿拉伯利雅得省斯特拉 Acwa power 2000(MW)混塔项目</option>
+          <option value="沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目">沙特阿拉伯利雅得省夏奇拉 Acwa power 1000(MW)混塔项目</option>
+        </select>
       </div>
       <div class="grid-2">
         <div class="form-group"><label>生产厂家</label><input type="text" name="factory" required></div>
@@ -229,7 +228,7 @@
             const radio = document.querySelector(`input[name="${k}"][value="${v}"]`);
             if (radio) radio.checked = true;
           } else {
-            el.value = v || '';
+            el.value = v;
           }
         }
       } catch(e){}
@@ -405,7 +404,7 @@
       document.getElementById('addUpdateBtn').textContent = '➕ 添加到待生成列表';
       document.getElementById('cancelEditBtn').style.display = 'none';
       clearFormFields(true);
-      document.getElementById('projectField').value = ''; // 额外确保项目清空
+      document.getElementById('projectField').value = ''; // 额外确保项目下拉清空
     }
 
     // 清空表单（保留项目、材料、厂家以便连续填写，除非 resetAll）
