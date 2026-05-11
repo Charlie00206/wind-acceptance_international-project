@@ -195,7 +195,10 @@
 
       <!-- 签名区域已移除，Word 生成后供手签 -->
 
-      <button type="button" class="btn" onclick="addToList()">➕ 添加到待生成列表</button>
+      <div style="display:flex; gap:10px;">
+        <button type="button" class="btn" id="addUpdateBtn" onclick="addToList()" style="flex:1;">➕ 添加到待生成列表</button>
+        <button type="button" class="btn btn-danger" id="cancelEditBtn" style="display:none; flex:0 0 auto;" onclick="cancelEdit()">取消编辑</button>
+      </div>
       <button type="button" class="btn btn-secondary" onclick="generateAll()" style="margin-top:6px;">📥 生成全部验收单（Word）</button>
     </form>
     <div class="tip">可重复添加不同埋件，也可直接点击生成，未填项在Word中保持空白</div>
@@ -208,6 +211,7 @@
   <script>
     // 待生成数据列表
     let recordList = [];
+    let editingIndex = -1; // 当前编辑项的索引，-1表示非编辑状态
 
     // 自动回填上次填写内容
     (function(){
@@ -317,12 +321,7 @@
       data.appearance = data.appearance_result || '';
       data.con11 = data.appearance_result === '符合要求' ? '合格' : (data.appearance_result ? '不合格' : '');
 
-      // 清理不需要直接渲染的 radio 字段（模板里没有对应占位符）
-      delete data.cert_result;
-      delete data.dim_result;
-      delete data.raw_result;
-      delete data.list_result;
-      delete data.appearance_result;
+      // 不再删除原始 radio 字段，以便编辑时回填（模板不会使用这些字段，无影响）
 
       // 自动计算整体验收结论
       const conclusionFields = ['con1','con2','con3','con4','con5','con6','con7','con8','con9','con10','con11'];
@@ -342,22 +341,71 @@
       return data;
     }
 
-    // 添加到待生成列表
+    // 添加到待生成列表（根据 editingIndex 决定新增还是更新）
     function addToList() {
       const form = document.getElementById('checkForm');
-      // 基本必填校验（仍然保留，因为列表需要有意义的数据，但生成时不再强制要求）
-      if (!form.project.value || !form.factory.value || !form.material.value || !form.quantity.value || !form.inData.value || !form.checkData.value) {
-        alert('请完整填写基本信息（项目、厂家、材料、数量、进场日期、检验日期）');
-        return;
+      
+      // 新增时才强制校验基本信息，编辑时允许已有数据为空（但仍建议填写完整）
+      if (editingIndex === -1) {
+        if (!form.project.value || !form.factory.value || !form.material.value || !form.quantity.value || !form.inData.value || !form.checkData.value) {
+          alert('请完整填写基本信息（项目、厂家、材料、数量、进场日期、检验日期）');
+          return;
+        }
       }
+
       const data = collectFormData();
-      recordList.push(data);
+      
+      if (editingIndex >= 0) {
+        // 编辑模式：更新已有记录
+        recordList[editingIndex] = data;
+        cancelEdit(); // 退出编辑状态并清空表单
+      } else {
+        // 新增模式
+        recordList.push(data);
+        clearFormFields(false);
+      }
+
       updateCartDisplay();
-      clearFormFields(false);
       saveTempData();
     }
 
-    // 清空表单（保留项目、材料、厂家以便连续填写）
+    // 编辑列表项：将数据回填到表单
+    function editItem(index) {
+      const item = recordList[index];
+      if (!item) return;
+      editingIndex = index;
+
+      const form = document.getElementById('checkForm');
+      // 回填所有字段
+      for (let [name, value] of Object.entries(item)) {
+        const el = form.elements[name];
+        if (!el) continue;
+        if (el.type === 'radio') {
+          const radio = form.querySelector(`input[name="${name}"][value="${value}"]`);
+          if (radio) radio.checked = true;
+        } else {
+          el.value = value || '';
+        }
+      }
+
+      // 切换按钮文字与显示
+      document.getElementById('addUpdateBtn').textContent = '💾 保存修改';
+      document.getElementById('cancelEditBtn').style.display = 'inline-block';
+
+      // 更新结论显示
+      updateConclusionDisplay();
+    }
+
+    // 取消编辑：恢复初始状态
+    function cancelEdit() {
+      editingIndex = -1;
+      document.getElementById('addUpdateBtn').textContent = '➕ 添加到待生成列表';
+      document.getElementById('cancelEditBtn').style.display = 'none';
+      clearFormFields(true);
+      document.getElementById('projectField').value = ''; // 额外确保项目下拉清空
+    }
+
+    // 清空表单（保留项目、材料、厂家以便连续填写，除非 resetAll）
     function clearFormFields(resetAll = false) {
       const form = document.getElementById('checkForm');
       for (let el of form.elements) {
@@ -372,13 +420,17 @@
       if (display) display.value = '';
     }
 
-    // 一键清空（列表 + 表单 + 缓存）
+    // 一键清空（列表 + 表单 + 缓存 + 编辑状态）
     function clearAll() {
       recordList = [];
+      editingIndex = -1;
       updateCartDisplay();
       clearFormFields(true);
       localStorage.removeItem('acceptance_last');
       document.getElementById('projectField').value = '';
+      // 如果处于编辑状态则重置按钮
+      document.getElementById('addUpdateBtn').textContent = '➕ 添加到待生成列表';
+      document.getElementById('cancelEditBtn').style.display = 'none';
     }
 
     // 更新待生成列表显示
@@ -393,7 +445,10 @@
       recordList.forEach((item, idx) => {
         html += `<div class="list-item">
           <span><span class="badge">${idx+1}</span> ${item.material || '未选'} – ${item.inData || ''} (${item.factory || ''})</span>
-          <button type="button" class="btn-small btn-danger" style="padding:4px 10px;" onclick="removeItem(${idx})">删除</button>
+          <div>
+            <button type="button" class="btn-small" style="padding:4px 10px; background:#eab308; margin-right:6px;" onclick="editItem(${idx})">✏️ 编辑</button>
+            <button type="button" class="btn-small btn-danger" style="padding:4px 10px;" onclick="removeItem(${idx})">删除</button>
+          </div>
         </div>`;
       });
       listDiv.innerHTML = html;
