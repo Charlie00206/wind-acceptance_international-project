@@ -198,7 +198,7 @@
       <button type="button" class="btn" onclick="addToList()">➕ 添加到待生成列表</button>
       <button type="button" class="btn btn-secondary" onclick="generateAll()" style="margin-top:6px;">📥 生成全部验收单（Word）</button>
     </form>
-    <div class="tip">可重复添加不同埋件，最终生成一个包含多页的 Word 文档</div>
+    <div class="tip">可重复添加不同埋件，也可直接点击生成，未填项在Word中保持空白</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/pizzip@3.1.4/dist/pizzip.min.js"></script>
@@ -345,7 +345,7 @@
     // 添加到待生成列表
     function addToList() {
       const form = document.getElementById('checkForm');
-      // 基本必填校验
+      // 基本必填校验（仍然保留，因为列表需要有意义的数据，但生成时不再强制要求）
       if (!form.project.value || !form.factory.value || !form.material.value || !form.quantity.value || !form.inData.value || !form.checkData.value) {
         alert('请完整填写基本信息（项目、厂家、材料、数量、进场日期、检验日期）');
         return;
@@ -446,20 +446,18 @@
       });
     }
 
-    // 生成全部文档并下载
+    // 生成全部文档并下载（移除“至少一条记录”限制）
     async function generateAll() {
-      if (recordList.length === 0) {
-        alert('请先添加至少一个埋件的验收数据');
-        return;
-      }
       try {
+        // 如果待生成列表有内容则使用列表，否则使用当前表单数据生成单个验收单
+        const dataList = recordList.length > 0 ? recordList : [collectFormData()];
         const blobs = [];
-        for (const data of recordList) {
+        for (const data of dataList) {
           const blob = await renderOneDocx(data);
           blobs.push(blob);
         }
         const finalBlob = await mergeDocxBlobs(blobs);
-        const safeName = (recordList[0].project || '验收单').replace(/[\\/:*?"<>|]/g, '_');
+        const safeName = (dataList[0].project || '验收单').replace(/[\\/:*?"<>|]/g, '_');
         saveAs(finalBlob, `埋件验收单_${safeName}_${new Date().toISOString().slice(0,10)}.docx`);
         saveTempData();
       } catch (error) {
