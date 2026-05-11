@@ -193,11 +193,7 @@
         <input type="text" id="conclusionDisplay" readonly>
       </div>
 
-      <h3>✍️ 签名</h3>
-      <div class="grid-2">
-        <div class="form-group"><label>质检员/日期</label><input type="text" name="inspector"></div>
-        <div class="form-group"><label>专业工程师/日期</label><input type="text" name="engineer"></div>
-      </div>
+      <!-- 签名区域已移除，Word 生成后供手签 -->
 
       <button type="button" class="btn" onclick="addToList()">➕ 添加到待生成列表</button>
       <button type="button" class="btn btn-secondary" onclick="generateAll()" style="margin-top:6px;">📥 生成全部验收单（Word）</button>
@@ -338,6 +334,10 @@
         }
       }
       data.conclusion = allPass ? '合格，予以接收' : '不合格，拒绝接收';
+
+      // 签名信息留空，供打印后手签
+      data.inspector = '';
+      data.engineer = '';
 
       return data;
     }
